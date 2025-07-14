@@ -1,0 +1,26 @@
+{
+    "general": {
+        "animetime": 0.5,
+        "preview": 2,
+        "grab": true
+    },
+    "favority": [],
+    "history": {
+        "record": false,
+        "maxshown": 99,
+        "orderbycount": true
+    },
+    "process": {
+        "autorefresh": true,
+        "pintop": true
+    },
+    "environment": {
+        "java": "",
+        "java8": "Java_path/Java_8_win/bin/java",
+        "java9+": "Java_path/Java_11_win/bin/java",
+        "python": "Python3.11.9/python"
+    },
+    "residual": [],
+    "favorite": [
+    ]
+}
