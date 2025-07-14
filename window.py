@@ -121,7 +121,7 @@ def GetButtonIconName(config:dict)->str:
     if config['type']=='url':return f'file:///{apppath}/{GetExistsFileName(f'resources/shortcuts/{config['name']}.ico') or 'resources/icons/edge.png'}'
     elif (config['path'],config['file']) in [('.','cmd.exe'),('.','powershell.exe')]:return f'file:///{apppath}/resources/icons/{config['icon']}.png'
     elif GetExistsFileName(f'{config['path']}/{config['file'].strip('"').split(' ')[-1]}'):
-        if 'icon' in config:return f'file:///{apppath}/resources/icons/{config['icon']}.png'
+        if config['icon']:return f'file:///{apppath}/resources/icons/{config['icon']}.png'
         elif config['prefix'][:4]=='java':return f'file:///{apppath}/resources/icons/java.png'
         elif config['prefix']=='python':return f'file:///{apppath}/resources/icons/python.png'
         elif config['type']=='cmd':return f'file:///{apppath}/resources/icons/cmd.png'
@@ -552,7 +552,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(1330,750)
         self.setStyleSheet('QGroupBox{border:1px solid gray;margin-top:5px;}QGroupBox::title{position:relative;subcontrol-origin:margin;left:10px;}QScrollArea{border:none;}')
         self.setWindowIcon(QIcon('resources/icons/toolbox.ico'))
-        self.setWindowTitle('渗透测试集成工具箱 by laferce')
+        self.setWindowTitle('渗透测试集成工具箱 - 四川省德阳市公安局 李光')
         QShortcut(QKeySequence('Ctrl+C'),self).activated.connect(self.__shortcutctrlc)
         QShortcut(QKeySequence('Ctrl+F'),self).activated.connect(self.__shortcutctrlf)
         QShortcut(QKeySequence('Ctrl+V'),self).activated.connect(self.__shortcutctrlv)
@@ -1325,7 +1325,7 @@ class ToolsPanel(QDialog):
         t=[i for i in mainwindow.programs if s.lower() in f'{i['name']}\n{i['note']}'.lower()] if s else []
         self.found_count.setText(str(len(t)) if s else '')
         if self.show_unmatched.isChecked():t=mainwindow.programs
-        self.tools_browser.setHtml(f'{self.htmlhead}{''.join(f'{self.CreateButtons(i)}{f'<pre>{i['note']}</pre>' if 'note' in i else ''}<hr>' for i in t)}<script>{mainwindow.htmlroot}{self.htmltail}</script>' if t else f'<h2>无匹配项，请修改关键字</h2><script>{mainwindow.htmlroot}</script>' if s else f'<h2>请输入关键字检索</h2><script>{mainwindow.htmlroot}</script>',QUrl(apppath))
+        self.tools_browser.setHtml(f'{self.htmlhead}{''.join(f'{self.CreateButtons(i)}{f'<pre>{i['note']}</pre>'}<hr>' for i in t)}<script>{mainwindow.htmlroot}{self.htmltail}</script>' if t else f'<h2>无匹配项，请修改关键字</h2><script>{mainwindow.htmlroot}</script>' if s else f'<h2>请输入关键字检索</h2><script>{mainwindow.htmlroot}</script>',QUrl(apppath))
     @AddWatcher
     def __switch_search(self)->None:
         n=self.boards.index(self.hidden_board.children()[0])
@@ -2248,8 +2248,7 @@ class EmbedCmdTopic(TopicBase):
             if ':' in n[0].removeprefix(p):return RequestMessage('w',self,'警告','不能将工具目录外部的文件设置为结果文件')
             if RequestMessage('q',self,'提示','该操作不会修改工具本身保存结果的路径，只修改工具箱监控目录，是否继续？',QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.No,QMessageBox.StandardButton.No)==QMessageBox.StandardButton.Yes:
                 m=GetOutputFormat(p,n)
-                if m[0]:self.config['output']=m[0]
-                elif 'output' in self.config:self.config.pop('output')
+                self.config['output']=m[0]
                 self.outputpath=f'{apppath}/{self.config['path']}/{self.config['output']}'.rstrip('/')
                 self.config['format']=m[1]
                 self.watcher.removePaths(self.watcher.directories())
